@@ -1,0 +1,51 @@
+version: "3.3"
+services:
+  mlflow:
+    image: mlflow # docker build -t mlflow .
+    container_name: mlflow
+    ports:
+      - 5000:5000
+      - 8001:8001
+    restart: always
+    environment:
+      - MLFLOW_S3_ENDPOINT_URL=http://minio:9000
+      - AWS_ACCESS_KEY_ID=admin
+      - AWS_SECRET_ACCESS_KEY=123456789
+    entrypoint: bash -c "mlflow server --backend-store-uri postgresql://root:root@postgres/mlflow_db --default-artifact-root s3://mlflow/ --host 0.0.0.0"
+    volumes:
+      - ./mlflow:/mlflow
+    depends_on:
+      - minio
+      - db
+  minio:
+    image: quay.io/minio/minio
+    container_name: minio
+    restart: always
+    environment:
+        - MINIO_ROOT_USER=admin
+        - MINIO_ROOT_PASSWORD=123456789
+
+    ports:
+        - "9001:9001"
+        - "9000:9000"
+    volumes:
+        - ./S3/data:/data
+    command: server /data --console-address ":9001" 
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+        interval: 30s
+        timeout: 30s
+        retries: 3
+  db:
+    image: postgres:14.2
+    container_name: postgres
+    restart: always
+    volumes:
+        - ./database-data:/var/lib/postgresql/data/
+    environment:
+        POSTGRES_USER: root
+        POSTGRES_PASSWORD: root
+        POSTGRES_DB: mlflow_db
+    ports:
+    - "5432:5432"
+
