@@ -1,4 +1,7 @@
-cmd.sh
-notebook.ipynb
 S3
 database-data
+cmd.sh
+env
+venv
+*/env
+*/venv
