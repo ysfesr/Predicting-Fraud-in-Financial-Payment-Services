@@ -1,0 +1,12 @@
+name: PretictingFraud
+
+conda_env: conda.yaml
+
+entry_points:
+  main:
+    parameters:
+      n_estimators: {type: integer, default: 350}
+      max_samples: {type: float, default: 0.5}
+      max_features: {type: float, default: 0.75}
+      max_depth: {type: integer, default: None}
+    command: "python train.py {n_estimators} {max_samples} {max_features} {max_depth}"
