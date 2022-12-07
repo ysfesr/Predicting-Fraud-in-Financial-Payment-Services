@@ -14,35 +14,35 @@ Finally, Streamlit is a library for building interactive, web-based applications
 ![Home Page](/images/1.png "Home Page")
 
 ## Setup
-- First, build an MLflow docker image with all dependencies
+- Create an MLflow Docker image containing all necessary dependencies.
 ```bash
 docker build -t mlflow . 
 ```
-- Run docker compose (MLflow, MINIO, PostgreSQL)
+- Launch MLflow, MINIO, and PostgreSQL using Docker Compose.
 ```bash
 docker-compose up
 ```
 
-- Create a bucket in [minio](http://localhost:9001) to store artifacts (name it mlflow)
-- Create an experiment in [mlflow](http://localhost:5000) to store artifacts (name it for example FraudPredicition)
-- Set required environment variables
+- Create a bucket named "mlflow" in [minio](http://localhost:9001) to store artifacts.
+- Create an MLFlow experiment called "FraudPrediction" and store any artifacts created within it.
+- Set up the necessary environment variables
 ```bash
 $Env:MLFLOW_TRACKING_URI='http://localhost:5000'  (PowerShell)
 export MLFLOW_TRACKING_URI='http://localhost:5000' (Unix-like)
 ```
 
-- Run some experiments 
+- Using MLFlow, run some experiments to determine the best parameters for your project. 
 ```bash
 cd ./Project
 mlflow run . --experiment-name FraudPredicition -P n_estimators=10 -P max_samples=0.5 -P max_features=0.75 -P max_depth=10
 ```
-- Register your best model in the mlflow registry
-- serve the model registred via a RESTAPI
+- Register the best model in the MLflow Registry
+- Serve the model registered via a REST API
 ```bash
 docker exec -d mlflow mlflow models serve --model-uri models:/<Register-name>/Production -h 0.0.0.0 -p 8001 --no-conda
 ```
 
-- Launche the web application
+- Launch the web application
 ```bash
 cd ./app
 virtualenv venv
